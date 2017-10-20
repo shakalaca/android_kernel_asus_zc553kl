@@ -1,0 +1,57 @@
+From dd9a9ba3475b243e6e1d617ae1e9b1bdb65f7d15 Mon Sep 17 00:00:00 2001
+From: "ryan.huang" <ryan.huang@hptg.com>
+Date: Tue, 11 Oct 2016 21:33:42 +0800
+Subject: [PATCH] Modify range only apply to LaserFocus_value
+
+---
+ laura/src/func/laura_shipping_func.c | 4 ++--
+ laura/src/msm_laser_focus_hepta.c    | 2 ++
+ show_lib/inc/msm_laser_focus.h       | 4 ++--
+ 3 files changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/laura/src/func/laura_shipping_func.c b/laura/src/func/laura_shipping_func.c
+index af52f4f..e88154b 100644
+--- a/laura/src/func/laura_shipping_func.c
++++ b/laura/src/func/laura_shipping_func.c
+@@ -1034,8 +1034,8 @@ int	Read_Range_Data(struct msm_laser_focus_ctrl_t *dev_t){
+ 
+ 	uint16_t IT_verify;
+ 
+-	int confA = 1300;
+-	int confC = 5600;
++	int confA = 500;
++	int confC = 2200;
+ 	int ItB = 5000;
+ 
+ 	thd = Settings[CONFIDENCE_FACTOR];
+diff --git a/laura/src/msm_laser_focus_hepta.c b/laura/src/msm_laser_focus_hepta.c
+index bc6c4ad..d891abe 100644
+--- a/laura/src/msm_laser_focus_hepta.c
++++ b/laura/src/msm_laser_focus_hepta.c
+@@ -545,6 +545,8 @@ static int ATD_Laura_device_get_range_read(struct seq_file *buf, void *v)
+ 		LOG_Handler(LOG_ERR, "%s: Read_range(%d) failed\n", __func__, Range);
+ 		Range = -9999;
+ 	}
++    if (Range >= 1500 && ErrCode == 0)
++        Range = 1500;
+ 	
+ 	LOG_Handler(LOG_ERR, "%s : Get range (%d)  Device (%d)\n", __func__, Range , laura_t->device_state);
+ 
+diff --git a/show_lib/inc/msm_laser_focus.h b/show_lib/inc/msm_laser_focus.h
+index c102b51..e34affb 100644
+--- a/show_lib/inc/msm_laser_focus.h
++++ b/show_lib/inc/msm_laser_focus.h
+@@ -142,8 +142,8 @@ struct msm_laser_focus_ctrl_t {
+ };
+ 
+ #define        DEFAULT_AMBIENT                         1600
+-#define        DEFAULT_CONFIDENCE10                    1300
+-#define        DEFAULT_CONFIDENCE_THD          		   5600
++#define        DEFAULT_CONFIDENCE10                    500
++#define        DEFAULT_CONFIDENCE_THD          		   2200
+ #define        DEFAULT_IT                              5000
+ #define        DEFAULT_CONFIDENCE_FACTOR       			 16
+ #define        DEFAULT_DISTANCE_THD                    1500
+-- 
+1.9.1
+

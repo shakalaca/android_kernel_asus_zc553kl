@@ -1,0 +1,12 @@
+
+config TOUCHSCREEN_FT5436_DRIVER
+	tristate "FOCALTECH FT5436 touchpanel driver"
+	default n
+	help
+	  This is the main file for touchpanel driver for FOCALTECH FT5436
+	  touchscreens.
+
+	  Say Y here if you have a FOCALTECH FT5436 touchscreen connected
+	  to your system.
+
+	  If unsure, say N.
