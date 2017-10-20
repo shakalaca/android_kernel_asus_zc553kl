@@ -3044,11 +3044,13 @@ static int gtp_fb_notifier_callback(struct notifier_block *noti, unsigned long e
 	struct goodix_ts_data *ts = container_of(noti, struct goodix_ts_data, notifier);
 	struct fb_event *ev_data = data;
 	int *blank;
+#if 0
 //+TT884057,wangxiang,iopenlink,add,20161013,Suspend with pressing your finger,the point can not be release.
 	gtp_touch_up(ts,0);
 	input_sync(ts->input_dev);
 	GTP_DEBUG("wangx:Touch Release!");
 //-TT884057,wangxiang,iopenlink,add,20161013,Suspend with pressing your finger,the point can not be release.
+#endif
 	if (ev_data && ev_data->data && event == FB_EARLY_EVENT_BLANK) {
 		blank = ev_data->data;
 		if (*blank == FB_BLANK_UNBLANK) {
