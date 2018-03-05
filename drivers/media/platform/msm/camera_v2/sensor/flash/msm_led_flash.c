@@ -25,7 +25,7 @@ static long msm_led_flash_subdev_ioctl(struct v4l2_subdev *sd,
 {
 	struct msm_led_flash_ctrl_t *fctrl = NULL;
 	void __user *argp = (void __user *)arg;
-	printk("come to %s,%d,allenyao\n",__func__,__LINE__);
+	//printk("come to %s,%d,allenyao\n",__func__,__LINE__);
 	if (!sd) {
 		pr_err("sd NULL\n");
 		return -EINVAL;
@@ -121,7 +121,7 @@ static long msm_led_flash_subdev_do_ioctl(
 	struct msm_flash_init_info_t flash_init_info;
 
 	CDBG("Enter");
-	printk("come to %s,%d,allenyao-flash\n",__func__,__LINE__);
+	//printk("come to %s,%d,allenyao-flash\n",__func__,__LINE__);
 	if (!file || !arg) {
 		pr_err("%s:failed NULL parameter\n", __func__);
 		return -EINVAL;
