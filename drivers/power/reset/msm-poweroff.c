@@ -322,6 +322,13 @@ static void msm_restart_prepare(const char *cmd)
 			qpnp_pon_set_restart_reason(
 				PON_RESTART_REASON_KEYS_CLEAR);
 			__raw_writel(0x7766550a, restart_reason);
+                }
+        // added begin by weiguoqiu for asus unlock tool 2017/05/19
+        else if (!strncmp(cmd, "oem-8",11)) {
+                        qpnp_pon_set_restart_reason(
+                                PON_RESTART_REASON_KEYS_CLEAR);
+                        __raw_writel(0x77665504, restart_reason);
+       // added begin by weiguoqiu for asus unlock tool 2017/05/19
 		} else if (!strncmp(cmd, "oem-", 4)) {
 			unsigned long code;
 			int ret;
