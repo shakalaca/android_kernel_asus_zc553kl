@@ -95,12 +95,12 @@ unsigned short coordinate_y[150] = {0};
 *******************************************************************************/
 //Start:Reqxxx,liuyang3.wt,ADD,20160520, add gesture node.
 #define GESTURE_NODE "goodix_gesture"
-#define GESTURE_NUM  (7)
 
 int fts_gesture_enabled = 0;    /* module switch */
 static int gestures_flag; /* gesture flag, every bit stands for a gesture, [7]- all switch [6:0] = w, s, e, c, z, v, double click.  */
-static u8 gestures_data[GESTURE_NUM] = {GESTURE_W, GESTURE_S, GESTURE_E, GESTURE_C, GESTURE_Z, GESTURE_V, GESTURE_DOUBLECLICK}; /*  ASUS surport gesture type,*/ 
-static const int  gesture_key_codes[GESTURE_NUM] = {KEY_W, KEY_S, KEY_E, KEY_C, KEY_Z, KEY_V, KEY_POWER};
+static u8 gestures_data[] = {GESTURE_W, GESTURE_S, GESTURE_E, GESTURE_C, GESTURE_Z, GESTURE_V, GESTURE_DOUBLECLICK, GESTURE_UP}; /*  ASUS surport gesture type,*/ 
+static const int  gesture_key_codes[] = {KEY_W, KEY_S, KEY_E, KEY_C, KEY_Z, KEY_V, KEY_F23, KEY_F24};
+#define GESTURE_NUM  (sizeof(gesture_key_codes)/sizeof(gesture_key_codes[0]))
 
 static ssize_t fts_gesture_switch_read(struct file *file, char __user * page, size_t size, loff_t * ppos);
 static ssize_t fts_gesture_switch_write(struct file *filp, const char __user * buff, size_t len, loff_t * off);
@@ -136,10 +136,10 @@ static ssize_t fts_gesture_switch_write(struct file *filp, const char __user * b
 		pr_err("error,gestures_flag = 0x%x\n", gestures_flag);
 		return len;	
 	}
-	pr_info("temp = %s,gestures_flag = %d, ret:%d \n", temp, gestures_flag, ret);
+	pr_info("temp = %s,gestures_flag = 0x%x, ret:%d \n", temp, gestures_flag, ret);
 	//if ((gestures_flag - 0x80) > 0 ){
 	//Start:Bug199635 0x0 gesture disabled,0x1 double cleck gesture to be enable byElan 20160808
-	if ((gestures_flag - (0x1 << GESTURE_NUM)) > 0 ||(gestures_flag==0x01)){
+	if (0x01<<GESTURE_NUM & gestures_flag){
 	//End:Bug199635 0x0 gesture disabled,0x1 double cleck gesture to be enable byElan 20160808
 		fts_gesture_enabled = 1;
 		pr_info("fts_gesture_enabled = %d\n", fts_gesture_enabled);
@@ -187,6 +187,7 @@ int fts_Gesture_init(struct input_dev *input_dev)
 {
 	input_set_capability(input_dev, EV_KEY, KEY_POWER);
 	input_set_capability(input_dev, EV_KEY, KEY_F23);
+ 	input_set_capability(input_dev, EV_KEY, KEY_F24);
 	input_set_capability(input_dev, EV_KEY, KEY_GESTURE_W);
 	input_set_capability(input_dev, EV_KEY, KEY_GESTURE_C); 
 	input_set_capability(input_dev, EV_KEY, KEY_GESTURE_S); 
@@ -211,18 +212,12 @@ static void fts_check_gesture(struct input_dev *input_dev,int gesture_id)
 		if (gesture_id == gestures_data[i]){
 			if (gestures_flag & (0x01 << (GESTURE_NUM -i -1)))
 			{
-				pr_info("Wakeup by gesture(%x), light up the screen!", gesture_id);
-				if (KEY_POWER == gesture_key_codes[i]) {
-					input_report_key(input_dev, KEY_F23, 1);
-					input_sync(input_dev);
-					input_report_key(input_dev, KEY_F23, 0);
-					input_sync(input_dev);
-				} else {
+				pr_info("Wakeup by gesture(%x), light up the screen!\n", gesture_id);
+ 
 					input_report_key(input_dev, gesture_key_codes[i], 1);
 					input_sync(input_dev);
 					input_report_key(input_dev, gesture_key_codes[i], 0);
-					input_sync(input_dev);
-				}
+					input_sync(input_dev); 
 				break;
 			}
 		}
